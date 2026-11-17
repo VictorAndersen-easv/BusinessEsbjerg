@@ -1,24 +1,33 @@
-import { APITester } from "./APITester";
-import "./index.css";
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { AuthProvider, useAuth } from "./AuthContext";
+import DashboardPage from "./DashBoardPage";
+import LoginPage from "./LoginPage";
+import "./styles.css";
 
-import logo from "./logo.svg";
-import reactLogo from "./react.svg";
+/** Sends anonymous visitors to /login and remembers where they wanted to go. */
+function RequireAuth() {
+    const { user } = useAuth();
+    const location = useLocation();
 
-export function App() {
-  return (
-    <div className="app">
-      <div className="logo-container">
-        <img src={logo} alt="Bun Logo" className="logo bun-logo" />
-        <img src={reactLogo} alt="React Logo" className="logo react-logo" />
-      </div>
-
-      <h1>Bun + React</h1>
-      <p>
-        Edit <code>src/App.tsx</code> and save to test HMR
-      </p>
-      <APITester />
-    </div>
-  );
+    if (!user) {
+        return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    }
+    return <Outlet />;
 }
 
-export default App;
+export default function App() {
+    return (
+        <BrowserRouter>
+            <AuthProvider>
+                <Routes>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route element={<RequireAuth />}>
+                        <Route path="/" element={<DashboardPage />} />
+                        {/* Future: /requests, /requests/new, /balances, /approvals, /admin/rules */}
+                    </Route>
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </AuthProvider>
+        </BrowserRouter>
+    );
+}

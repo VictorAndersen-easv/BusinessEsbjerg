@@ -1,0 +1,218 @@
+:root {
+    --bg: #f3f5f8;
+    --surface: #ffffff;
+    --text: #1c2430;
+    --muted: #5d6877;
+    --border: #d5dbe3;
+    --primary: #0b5cad;
+    --primary-hover: #094a8c;
+    --primary-text: #ffffff;
+    --danger: #b3261e;
+    --focus: #0b5cad;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #12161c;
+        --surface: #1b212a;
+        --text: #e8ecf1;
+        --muted: #9aa5b4;
+        --border: #323b48;
+        --primary: #5aa2ec;
+        --primary-hover: #7bb5f0;
+        --primary-text: #0c1117;
+        --danger: #ff8a80;
+        --focus: #5aa2ec;
+        color-scheme: dark;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+}
+
+/* ---------- Login ---------- */
+
+.login-page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-header h1 {
+    margin: 0.75rem 0 0.25rem;
+    font-size: 1.4rem;
+}
+
+.login-header p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+    border-radius: 12px;
+    background: var(--primary);
+    color: var(--primary-text);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.field label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.field input {
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.password-wrap {
+    position: relative;
+}
+
+.password-wrap input {
+    padding-right: 4.5rem;
+}
+
+.toggle {
+    position: absolute;
+    top: 50%;
+    right: 0.4rem;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.35rem 0.5rem;
+    cursor: pointer;
+}
+
+.error {
+    min-height: 1.25rem;
+    color: var(--danger);
+    font-size: 0.9rem;
+}
+
+.primary {
+    padding: 0.7rem 1rem;
+    border: 0;
+    border-radius: 8px;
+    background: var(--primary);
+    color: var(--primary-text);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+}
+
+.primary:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.hint {
+    margin: 1.25rem 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+}
+
+/* ---------- App shell (placeholder dashboard) ---------- */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.topbar-right button {
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.badge {
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
