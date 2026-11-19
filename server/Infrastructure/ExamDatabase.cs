@@ -13,4 +13,6 @@ public class ExamDatabase : DataConnection
     public ExamDatabase(DataOptions options) : base(options) { }
 
     public ITable<Employee> Employees => this.GetTable<Employee>();
+    public ITable<HolidayAccountType> HolidayAccountTypes => this.GetTable<HolidayAccountType>();
+    public ITable<HolidayRequest> HolidayRequests => this.GetTable<HolidayRequest>();
 }

@@ -5,7 +5,7 @@ import type { LoginResponse, Role } from "./Types.ts";
  * While true, login() never touches the network.
  */
 const USE_MOCK = false;
-const API_BASE = "http://localhost:<port>/api";
+const API_BASE = "http://localhost:5117/api";
 
 export class ApiError extends Error {
     status: number;
@@ -80,4 +80,18 @@ async function mockLogin(email: string, password: string): Promise<LoginResponse
             role,
         },
     };
+}
+
+import type { HolidayRequest } from "./Types";
+
+const MOCK_REQUESTS: HolidayRequest[] = [
+    { requestId: 1, startDate: "2027-02-15", endDate: "2027-02-19", account: "WEEKS_1_5", totalHours: 37,  status: "APPROVED",              isMainHoliday: false },
+    { requestId: 2, startDate: "2027-07-05", endDate: "2027-07-23", account: "WEEKS_1_5", totalHours: 111, status: "SUBMITTED",             isMainHoliday: true  },
+    { requestId: 3, startDate: "2026-10-23", endDate: "2026-10-23", account: "WEEKS_1_5", totalHours: 7,   status: "APPROVED",              isMainHoliday: false },
+    { requestId: 4, startDate: "2027-05-10", endDate: "2027-05-14", account: "WEEK_6",    totalHours: 37,  status: "REJECTED",              isMainHoliday: false },
+    { requestId: 5, startDate: "2027-03-08", endDate: "2027-03-09", account: "WEEKS_1_5", totalHours: 15,  status: "CANCELLED_BY_EMPLOYEE", isMainHoliday: false },
+];
+
+export async function getMyRequests(): Promise<HolidayRequest[]> {
+    return request<HolidayRequest[]>("/requests/mine");
 }

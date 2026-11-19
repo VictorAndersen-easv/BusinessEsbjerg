@@ -1,5 +1,6 @@
 import { useAuth } from "./AuthContext";
-import type { Role } from "./types";
+import type { Role } from "./Types";
+import RequestsTable from "./RequestsTable.tsx"
 
 const ROLE_LABEL: Record<Role, string> = {
     EMPLOYEE: "Employee",
@@ -24,10 +25,10 @@ export default function DashboardPage() {
 
             <main className="content">
                 <h1>Welcome, {user.name}</h1>
-                <p>
-                    This is a placeholder. Next up: holiday balances for the two accounts
-                    (weeks 1–5 and week 6) and the request form.
-                </p>
+                <section>
+                    <h2>My holiday requests</h2>
+                    <RequestsTable />
+                </section>
             </main>
         </div>
     );

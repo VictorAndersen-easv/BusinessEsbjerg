@@ -1,11 +1,15 @@
 using System.Text;
 using api.Auth;
+using api.Requests;
+using Service;
 using Infrastructure;
 using LinqToDB;
 using LinqToDB.DataProvider.PostgreSQL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +20,7 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
 // DataOptions = "how to connect" (created once). ExamDatabase = a connection (created per request).
 builder.Services.AddSingleton(new DataOptions().UsePostgreSQL(connectionString));
 builder.Services.AddScoped<ExamDatabase>();
+builder.Services.AddScoped<RequestService>();
 
 // ---------- Login tokens (JWT) ----------
 var jwtKey = builder.Configuration["Jwt:Key"]
@@ -83,5 +88,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
+app.MapRequestEndpoints();
 
 app.Run();
