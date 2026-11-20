@@ -15,7 +15,14 @@ public static class RequestEndpoints
         {
             // The id comes from the signed token, NOT from the URL. That is what stops
             // one employee from reading another employee's requests.
-            var employeeId = int.Parse(principal.FindFirstValue("sub")!);
+            if (!int.TryParse(principal.FindFirstValue("employee_id"), out var employeeId))
+            {
+                return Results.Problem(
+                    statusCode: StatusCodes.Status403Forbidden,
+                    title: "Forbidden",
+                    detail: "Only employee logins have holiday requests.");
+            }
+
             return Results.Ok(await requests.GetForEmployeeAsync(employeeId));
         });
     }

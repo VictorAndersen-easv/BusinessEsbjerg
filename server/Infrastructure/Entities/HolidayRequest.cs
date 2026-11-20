@@ -25,7 +25,10 @@ public class HolidayRequest
     [Column("is_main_holiday")]
     public bool IsMainHoliday { get; set; }
 
-    /// <summary>SUBMITTED, APPROVED, REJECTED, CANCELLED_BY_EMPLOYEE or CANCELLED_BY_EMPLOYER.</summary>
+    /// <summary>
+    /// SUBMITTED, APPROVED, REJECTED, CANCELLED_BY_EMPLOYEE (withdrawn before a decision),
+    /// CANCELLATION_REQUESTED, CANCELLED or CANCELLED_BY_EMPLOYER.
+    /// </summary>
     [Column("status")]
     public string Status { get; set; } = "SUBMITTED";
 
@@ -33,10 +36,15 @@ public class HolidayRequest
     [Column("total_hours")]
     public decimal TotalHours { get; set; }
 
+    /// <summary>Snapshot of the days this request costs.</summary>
+    [Column("total_days")]
+    public decimal TotalDays { get; set; }
+
     /// <summary>The database fills this in itself (DEFAULT now()), so we never send it.</summary>
     [Column("submitted_at", SkipOnInsert = true)]
     public DateTime SubmittedAt { get; set; }
 
+    /// <summary>The user_account (accountant login) that decided.</summary>
     [Column("decided_by")]
     public int? DecidedBy { get; set; }
 
@@ -46,9 +54,18 @@ public class HolidayRequest
     [Column("decision_note")]
     public string? DecisionNote { get; set; }
 
+    [Column("cancellation_requested_at")]
+    public DateTime? CancellationRequestedAt { get; set; }
+
     [Column("cancel_reason")]
     public string? CancelReason { get; set; }
 
-    [Column("employer_loss_compensation_dkk")]
-    public decimal? EmployerLossCompensationDkk { get; set; }
+    [Column("cancel_decided_by")]
+    public int? CancelDecidedBy { get; set; }
+
+    [Column("cancel_decided_at")]
+    public DateTime? CancelDecidedAt { get; set; }
+
+    [Column("cancel_decision_note")]
+    public string? CancelDecisionNote { get; set; }
 }
