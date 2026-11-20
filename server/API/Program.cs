@@ -1,6 +1,7 @@
 using System.Text;
 using api.Auth;
 using api.Requests;
+using api.Employees;
 using Service;
 using Infrastructure;
 using LinqToDB;
@@ -21,6 +22,9 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
 builder.Services.AddSingleton(new DataOptions().UsePostgreSQL(connectionString));
 builder.Services.AddScoped<ExamDatabase>();
 builder.Services.AddScoped<RequestService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddSingleton(new EmployeeSettings(
+    builder.Configuration["Employees:EmailDomain"] ?? "@businessesbjerg.com"));
 
 // ---------- Login tokens (JWT) ----------
 var jwtKey = builder.Configuration["Jwt:Key"]
@@ -46,7 +50,9 @@ builder.Services
             RoleClaimType = "role",
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(Policies.Staff, p => p.RequireRole(Roles.Accountant, Roles.SystemOwner))
+    .AddPolicy(Policies.SystemOwner, p => p.RequireRole(Roles.SystemOwner));
 
 // ---------- CORS: let the React dev server (port 3000) call this API ----------
 builder.Services.AddCors(options => options.AddPolicy("Frontend", policy =>
@@ -89,5 +95,6 @@ app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapRequestEndpoints();
+app.MapEmployeeEndpoints();
 
 app.Run();
