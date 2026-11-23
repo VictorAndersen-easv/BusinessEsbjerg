@@ -7,7 +7,7 @@ import {
     type ReactNode,
 } from "react";
 import * as api from "./Api.ts";
-import type { LoginResponse, User } from "./types";
+import type { LoginResponse, User } from "./Types";
 
 const STORAGE_KEY = "be.auth";
 

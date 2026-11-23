@@ -13,6 +13,8 @@ const STATUS_LABEL: Record<RequestStatus, string> = {
     APPROVED: "Approved",
     REJECTED: "Rejected",
     CANCELLED_BY_EMPLOYEE: "Cancelled by you",
+    CANCELLATION_REQUESTED: "Cancellation requested",
+    CANCELLED: "Cancelled",
     CANCELLED_BY_EMPLOYER: "Cancelled by employer",
 };
 

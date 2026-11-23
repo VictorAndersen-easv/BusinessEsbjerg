@@ -1,4 +1,10 @@
 import type { LoginResponse, Role } from "./Types.ts";
+import type {
+    ChangeScheduleInput,
+    CreateEmployeeInput,
+    Employee,
+    Schedule,
+} from "./Types";
 
 /**
  * Set to false once the .NET backend has a POST /api/auth/login endpoint.
@@ -65,16 +71,17 @@ async function mockLogin(email: string, password: string): Promise<LoginResponse
     }
 
     const local = email.split("@")[0] ?? "user";
-    const role: Role = local.startsWith("accounting")
-        ? "ACCOUNTING"
-        : local.startsWith("admin")
-            ? "ADMIN"
+    const role: Role = local.startsWith("accountant")
+        ? "ACCOUNTANT"
+        : local.startsWith("owner")
+            ? "SYSTEM_OWNER"
             : "EMPLOYEE";
 
     return {
         token: "mock-token",
         user: {
-            employeeId: 1,
+            accountId: 1,
+            employeeId: role === "EMPLOYEE" ? 1 : null,
             name: local.charAt(0).toUpperCase() + local.slice(1),
             email,
             role,
@@ -94,4 +101,23 @@ const MOCK_REQUESTS: HolidayRequest[] = [
 
 export async function getMyRequests(): Promise<HolidayRequest[]> {
     return request<HolidayRequest[]>("/requests/mine");
+}
+
+export function getEmployees(): Promise<Employee[]> {
+    return request<Employee[]>("/employees");
+}
+
+export function createEmployee(input: CreateEmployeeInput): Promise<Employee> {
+    return request<Employee>("/employees", { method: "POST", body: JSON.stringify(input) });
+}
+
+export function getSchedules(employeeId: number): Promise<Schedule[]> {
+    return request<Schedule[]>(`/employees/${employeeId}/schedules`);
+}
+
+export function changeSchedule(employeeId: number, input: ChangeScheduleInput): Promise<Schedule> {
+    return request<Schedule>(`/employees/${employeeId}/schedules`, {
+        method: "POST",
+        body: JSON.stringify(input),
+    });
 }

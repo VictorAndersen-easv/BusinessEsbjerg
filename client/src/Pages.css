@@ -1,0 +1,164 @@
+/* Uses the colour variables from Styles.css (--surface, --border, --muted, --primary, ...) */
+
+/* ---------- Top bar menu ---------- */
+.main-nav {
+    display: flex;
+    gap: 0.25rem;
+    margin-right: auto;
+    margin-left: 1.5rem;
+}
+
+.nav-link {
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    color: var(--muted);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* ---------- Page layout ---------- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.content h2 {
+    font-size: 1.15rem;
+}
+
+.button-link {
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.button-link.primary-link {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-text);
+}
+
+.link-button {
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font: inherit;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+}
+
+.notice {
+    margin: 0 0 1rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+}
+
+.notice.success {
+    border-color: #1b7a3d;
+}
+
+/* ---------- Forms ---------- */
+.form-card {
+    max-width: 760px;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+}
+
+.form-card h2 {
+    margin-top: 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.error-text {
+    display: block;
+    color: var(--danger);
+    font-size: 0.8rem;
+}
+
+/* ---------- Weekly schedule editor ---------- */
+.schedule-editor {
+    margin: 0 0 1.25rem;
+    padding: 0.75rem 1rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.schedule-editor legend {
+    padding: 0 0.4rem;
+    font-weight: 600;
+}
+
+.schedule-editor table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.schedule-editor th,
+.schedule-editor td {
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+}
+
+.schedule-editor tbody th {
+    font-weight: 500;
+}
+
+.schedule-editor .hours {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.schedule-editor tfoot td {
+    border-top: 1px solid var(--border);
+    font-weight: 600;
+}
+
+.schedule-editor input[type="time"] {
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+}

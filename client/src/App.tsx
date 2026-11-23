@@ -1,8 +1,13 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./AuthContext";
-import DashboardPage from "./DashBoardPage";
+import AppLayout from "./AppLayout";
+import DashBoardPage from "./DashBoardPage";
+import EmployeeSchedulePage from "./EmployeeSchedulePage";
+import EmployeesPage from "./EmployeesPage";
 import LoginPage from "./LoginPage";
-import "./styles.css";
+import NewEmployeePage from "./NewEmployeePage";
+import RequireRole from "./RequireRole";
+import "./Styles.css";
 
 /** Sends anonymous visitors to /login and remembers where they wanted to go. */
 function RequireAuth() {
@@ -21,10 +26,23 @@ export default function App() {
             <AuthProvider>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
+
+                    {/* Everything below needs a login, and gets the top bar from AppLayout */}
                     <Route element={<RequireAuth />}>
-                        <Route path="/" element={<DashboardPage />} />
-                        {/* Future: /requests, /requests/new, /balances, /approvals, /admin/rules */}
+                        <Route element={<AppLayout />}>
+                            <Route path="/" element={<DashBoardPage />} />
+
+                            <Route element={<RequireRole allow={["ACCOUNTANT", "SYSTEM_OWNER"]} />}>
+                                <Route path="/employees" element={<EmployeesPage />} />
+                                <Route path="/employees/:employeeId" element={<EmployeeSchedulePage />} />
+                            </Route>
+
+                            <Route element={<RequireRole allow={["SYSTEM_OWNER"]} />}>
+                                <Route path="/employees/new" element={<NewEmployeePage />} />
+                            </Route>
+                        </Route>
                     </Route>
+
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </AuthProvider>
