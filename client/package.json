@@ -7,7 +7,8 @@
     "dev": "bun --hot src/index.ts",
     "build": "bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
     "start": "NODE_ENV=production bun src/index.ts",
-    "typecheck": "bun check"
+    "typecheck": "bun check",
+    "gen:tsapi": "bunx swagger-typescript-api generate --path http://localhost:5117/swagger/v1/swagger.json"
   },
   "dependencies": {
     "react": "^19",

@@ -45,6 +45,20 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
+          "dependencies": {
+            "NSwag.AspNetCore": {
+              "target": "Package",
+              "version": "[14.8.0, )"
+            },
+            "SQLite": {
+              "target": "Package",
+              "version": "[3.54.1, )"
+            },
+            "linq2db": {
+              "target": "Package",
+              "version": "[6.6.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -384,6 +398,20 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
+          "dependencies": {
+            "NSwag.AspNetCore": {
+              "target": "Package",
+              "version": "[14.8.0, )"
+            },
+            "SQLite": {
+              "target": "Package",
+              "version": "[3.54.1, )"
+            },
+            "linq2db": {
+              "target": "Package",
+              "version": "[6.6.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

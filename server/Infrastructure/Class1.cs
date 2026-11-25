@@ -1,6 +1,11 @@
 ﻿namespace Infrastructure;
 
-public class Class1
+public class User
 {
+    public string UserID { get; set; }
+    public string UserName { get; set; }
+    public string UserEmail { get; set; }
+    public string UserPassword { get; set; }
+    
 
 }
