@@ -1,0 +1,66 @@
+/* Uses the colour variables from Styles.css (--surface, --border, --muted, --danger, ...) */
+
+.balance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.balance-card {
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+}
+
+.balance-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    color: var(--muted);
+}
+
+.balance-card p {
+    margin: 0.15rem 0;
+}
+
+.balance-main {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.balance-main .negative {
+    color: var(--danger);
+}
+
+.balance-sub {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.expiry {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.bucket-list {
+    margin: 1rem 0 0;
+    padding: 0.75rem 0 0;
+    list-style: none;
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.bucket-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin-bottom: 0.75rem;
+}
+
+.bucket-list li:last-child {
+    margin-bottom: 0;
+}

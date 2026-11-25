@@ -17,5 +17,8 @@ public class ExamDatabase : DataConnection
     public ITable<WorkSchedule> WorkSchedules => this.GetTable<WorkSchedule>();
     public ITable<WorkScheduleDay> WorkScheduleDays => this.GetTable<WorkScheduleDay>();
     public ITable<HolidayAccountType> HolidayAccountTypes => this.GetTable<HolidayAccountType>();
+    public ITable<HolidayBucket> HolidayBuckets => this.GetTable<HolidayBucket>();
     public ITable<HolidayRequest> HolidayRequests => this.GetTable<HolidayRequest>();
+    public ITable<LedgerEntry> LedgerEntries => this.GetTable<LedgerEntry>();
+    public ITable<RuleParameter> RuleParameters => this.GetTable<RuleParameter>();
 }

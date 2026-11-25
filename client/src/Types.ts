@@ -82,3 +82,27 @@ export interface ChangeScheduleInput {
     startsOn: string;
     days: ScheduleDayInput[];
 }
+
+// ---------- Holiday balances ----------
+
+export interface BucketBalance {
+    bucketId: number;
+    earningStart: string;
+    earningEnd: string;
+    usageStart: string; // first day the holiday may be used
+    usageEnd: string; // last day; after this it expires
+    earnedHours: number;
+    earnedDays: number;
+    remainingHours: number;
+    remainingDays: number;
+}
+
+export interface AccountBalance {
+    account: AccountCode;
+    name: string;
+    availableHours: number; // what may be used today
+    availableDays: number;
+    totalHours: number; // including holiday that is earned but not usable yet
+    totalDays: number;
+    buckets: BucketBalance[];
+}

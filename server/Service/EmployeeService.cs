@@ -7,7 +7,7 @@ using LinqToDB.Async;
 namespace Service;
 
 /// <summary>Creating employees and managing their weekly working schedules.</summary>
-public class EmployeeService(ExamDatabase db, EmployeeSettings settings)
+public class EmployeeService(ExamDatabase db, EmployeeSettings settings, ScheduleConversionService conversions)
 {
     private static readonly string[] WeekdayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
@@ -125,6 +125,12 @@ public class EmployeeService(ExamDatabase db, EmployeeSettings settings)
         if (request.StartsOn.DayOfWeek != DayOfWeek.Monday)
             throw new RuleViolationException("A schedule must start on a Monday.");
 
+        // Months before this one are already booked in the (unchangeable) holiday ledger with the old schedule
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        if (request.StartsOn < new DateOnly(today.Year, today.Month, 1))
+            throw new RuleViolationException(
+                "A schedule cannot start before the current month, because earlier months are already booked in the holiday ledger.");
+
         if (employee.TerminationDate is { } left && ToDate(left) < request.StartsOn)
             throw new RuleViolationException("The employee has already left before that date.");
 
@@ -152,8 +158,10 @@ public class EmployeeService(ExamDatabase db, EmployeeSettings settings)
 
         var newScheduleId = await InsertScheduleAsync(employeeId, request.StartsOn, days, actingAccountId);
 
-        // Step 3 (balances): book the CONVERSION ledger entries here, in this same transaction,
-        // so the days stay the same and the hours follow the new day length.
+        // The days stay the same and the hours follow the new day length (see ScheduleConversionService).
+        // A schedule that starts later is converted by the daily job on the day it starts.
+        if (request.StartsOn <= today)
+            await conversions.ConvertDueAsync(employeeId, today, actingAccountId);
 
         await transaction.CommitAsync();
 

@@ -5,6 +5,7 @@ import type {
     Employee,
     Schedule,
 } from "./Types";
+import type { AccountBalance } from "./Types";
 
 /**
  * Set to false once the .NET backend has a POST /api/auth/login endpoint.
@@ -120,4 +121,8 @@ export function changeSchedule(employeeId: number, input: ChangeScheduleInput): 
         method: "POST",
         body: JSON.stringify(input),
     });
+}
+
+export function getMyBalances(): Promise<AccountBalance[]> {
+    return request<AccountBalance[]>("/balances/mine");
 }

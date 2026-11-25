@@ -1,5 +1,7 @@
 using System.Text;
+using api.Accrual;
 using api.Auth;
+using api.Balances;
 using api.Requests;
 using api.Employees;
 using Service;
@@ -25,6 +27,11 @@ builder.Services.AddScoped<RequestService>();
 builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddSingleton(new EmployeeSettings(
     builder.Configuration["Employees:EmailDomain"] ?? "@businessesbjerg.com"));
+
+builder.Services.AddScoped<AccrualService>();
+builder.Services.AddScoped<BalanceService>();
+builder.Services.AddHostedService<AccrualBackgroundService>();   // the daily job
+builder.Services.AddScoped<ScheduleConversionService>();
 
 // ---------- Login tokens (JWT) ----------
 var jwtKey = builder.Configuration["Jwt:Key"]
@@ -92,6 +99,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapAccrualEndpoints();
+app.MapBalanceEndpoints();
 
 app.MapAuthEndpoints();
 app.MapRequestEndpoints();

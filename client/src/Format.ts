@@ -43,3 +43,18 @@ export function nextMonday(from: Date = new Date()): string {
 export function isMonday(iso: string): boolean {
     return iso !== "" && new Date(`${iso}T00:00:00`).getDay() === 1;
 }
+
+const ACCOUNT_LABELS: Record<string, string> = {
+    WEEKS_1_5: "Weeks 1–5",
+    WEEK_6: "Week 6",
+};
+
+export function accountLabel(code: string): string {
+    return ACCOUNT_LABELS[code] ?? code;
+}
+
+/** 24.5 -> "24.5 days", 1 -> "1 day" */
+export function formatDays(days: number): string {
+    const text = days.toLocaleString("en-GB", { maximumFractionDigits: 2 });
+    return `${text} ${days === 1 ? "day" : "days"}`;
+}

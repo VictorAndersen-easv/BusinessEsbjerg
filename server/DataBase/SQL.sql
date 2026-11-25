@@ -306,6 +306,8 @@ CREATE TABLE ledger_entry (
                                   )
 );
 CREATE INDEX idx_ledger_bucket ON ledger_entry (bucket_id, entry_date);
+-- One accrual row per bucket per month: running the accrual twice can never double-book
+CREATE UNIQUE INDEX uq_ledger_accrual_month ON ledger_entry (bucket_id, entry_date) WHERE entry_type = 'ACCRUAL';
 
 -- Accounting rule: mistakes are corrected with a REVERSAL row, never by editing history
 CREATE FUNCTION forbid_ledger_change() RETURNS trigger AS $$
@@ -395,7 +397,9 @@ INSERT INTO rule_preset_value (preset_id, param_key, param_value, value_type) VA
                                                                                   (1,'TRANSFER_ENABLED','false','BOOL'),
                                                                                   (1,'TRANSFER_MAX_DAYS','5','INT'),
                                                                                   (1,'DEBT_MAX_DAYS','5','INT'),
-                                                                                  (1,'DEBT_CHECK_DATE','08-31','TEXT');
+                                                                                  (1,'DEBT_CHECK_DATE','08-31','TEXT'),
+                                                                                  (1,'PARTIAL_MONTH_DIVISOR','30','DECIMAL'),
+                                                                                  (1,'W15_ROUND_WHOLE_DAYS_AT_PERIOD_END','true','BOOL');
 
 -- Preset 2: KL 05.11 model (Business Esbjerg)
 INSERT INTO rule_preset_value (preset_id, param_key, param_value, value_type) VALUES
@@ -419,7 +423,9 @@ INSERT INTO rule_preset_value (preset_id, param_key, param_value, value_type) VA
                                                                                   (2,'TRANSFER_ENABLED','false','BOOL'),
                                                                                   (2,'TRANSFER_MAX_DAYS','5','INT'),
                                                                                   (2,'DEBT_MAX_DAYS','5','INT'),
-                                                                                  (2,'DEBT_CHECK_DATE','08-31','TEXT');
+                                                                                  (2,'DEBT_CHECK_DATE','08-31','TEXT'),
+                                                                                  (2,'PARTIAL_MONTH_DIVISOR','30','DECIMAL'),
+                                                                                  (2,'W15_ROUND_WHOLE_DAYS_AT_PERIOD_END','true','BOOL');
 
 -- Preset 3: starting point (the system owner fills in the rest)
 INSERT INTO rule_preset_value (preset_id, param_key, param_value, value_type) VALUES
