@@ -8,4 +8,7 @@ public static class Policies
 
     /// <summary>Only the system owner.</summary>
     public const string SystemOwner = "SystemOwner";
+
+    /// <summary>Only the accountant: approves and declines holiday requests.</summary>
+    public const string Accountant = "Accountant";
 }

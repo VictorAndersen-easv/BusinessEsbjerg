@@ -444,7 +444,18 @@ INSERT INTO calendar_day (date, name, day_type) VALUES
                                                     ('2026-12-25', '1. juledag',      'PUBLIC_HOLIDAY'),
                                                     ('2026-12-26', '2. juledag',      'PUBLIC_HOLIDAY'),
                                                     ('2026-12-31', 'Nytaarsaftensdag','COMPANY_DAY_OFF'),
-                                                    ('2027-01-01', 'Nytaarsdag',      'PUBLIC_HOLIDAY');
+                                                    ('2027-01-01', 'Nytaarsdag',      'PUBLIC_HOLIDAY'),
+                                                    ('2027-03-25', 'Skaertorsdag',   'PUBLIC_HOLIDAY'),
+                                                    ('2027-03-26', 'Langfredag',     'PUBLIC_HOLIDAY'),
+                                                    ('2027-03-28', 'Paaskedag',      'PUBLIC_HOLIDAY'),
+                                                    ('2027-03-29', '2. paaskedag',   'PUBLIC_HOLIDAY'),
+                                                    ('2027-05-06', 'Kristi himmelfartsdag', 'PUBLIC_HOLIDAY'),
+                                                    ('2027-05-16', 'Pinsedag',       'PUBLIC_HOLIDAY'),
+                                                    ('2027-05-17', '2. pinsedag',    'PUBLIC_HOLIDAY'),
+                                                    ('2027-12-24', 'Juleaftensdag',  'COMPANY_DAY_OFF'),
+                                                    ('2027-12-25', '1. juledag',     'PUBLIC_HOLIDAY'),
+                                                    ('2027-12-26', '2. juledag',     'PUBLIC_HOLIDAY'),
+                                                    ('2027-12-31', 'Nytaarsaftensdag', 'COMPANY_DAY_OFF');
 
 -- ---------------------------------------------------------------------
 -- 7. USEFUL QUERIES

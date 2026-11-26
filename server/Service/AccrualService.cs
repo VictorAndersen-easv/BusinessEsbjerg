@@ -110,29 +110,58 @@ public class AccrualService(ExamDatabase db, ScheduleConversionService conversio
                 newBuckets++;
             }
 
-            newEntries += await AccrueBucketAsync(hire, left, account, bucket, periodStart, periodEnd, schedules, rules, asOf);
+            newEntries += await AccrueBucketAsync(employee, account, bucket, schedules, rules, asOf);
         }
 
         return (newBuckets, newEntries);
     }
 
-    /// <summary>
-    /// Books one ACCRUAL row for every finished month of the earning period that is not in the ledger yet.
-    ///
-    /// The rounding rule: we never round each month on its own (that drifts). Instead we keep the EXACT
-    /// running total, round THAT to two decimals, and book the difference to what is already booked.
-    /// </summary>
+    /// <summary>Books the ACCRUAL rows that are due for one bucket.</summary>
     private async Task<int> AccrueBucketAsync(
-        DateOnly hire, DateOnly? left, HolidayAccountType account, HolidayBucket bucket,
-        DateOnly periodStart, DateOnly periodEnd, ScheduleBook schedules, RuleBook rules, DateOnly asOf)
+        Employee employee, HolidayAccountType account, HolidayBucket bucket,
+        ScheduleBook schedules, RuleBook rules, DateOnly asOf)
     {
         var booked = await db.LedgerEntries
             .Where(l => l.BucketId == bucket.BucketId && l.EntryType == "ACCRUAL")
             .ToListAsync();
 
+        var planned = PlanAccruals(employee, account, bucket, booked, schedules, rules, asOf);
+
+        foreach (var entry in planned)
+            await db.InsertAsync(entry);
+
+        return planned.Count;
+    }
+
+    /// <summary>
+    /// What the accrual WOULD book for a bucket up to a date, without saving anything.
+    /// The request planner uses this to see what a balance will be on a future date.
+    /// </summary>
+    public static List<LedgerEntry> ProjectAccruals(
+        Employee employee, HolidayAccountType account, HolidayBucket bucket,
+        IEnumerable<LedgerEntry> ledger, ScheduleBook schedules, RuleBook rules, DateOnly asOf) =>
+        PlanAccruals(employee, account, bucket, ledger.Where(l => l.EntryType == "ACCRUAL").ToList(), schedules, rules, asOf);
+
+    /// <summary>
+    /// Works out the ACCRUAL rows that are missing for every finished month of the bucket's earning period.
+    ///
+    /// The rounding rule: we never round each month on its own (that drifts). Instead we keep the EXACT
+    /// running total, round THAT to two decimals, and book the difference to what is already booked.
+    /// </summary>
+    private static List<LedgerEntry> PlanAccruals(
+        Employee employee, HolidayAccountType account, HolidayBucket bucket, List<LedgerEntry> alreadyBooked,
+        ScheduleBook schedules, RuleBook rules, DateOnly asOf)
+    {
+        var hire = ToDate(employee.HireDate);
+        DateOnly? left = employee.TerminationDate is null ? null : ToDate(employee.TerminationDate.Value);
+        var periodStart = ToDate(bucket.EarningStart);
+        var periodEnd = ToDate(bucket.EarningEnd);
+
+        var booked = alreadyBooked.ToList(); // a copy, so the caller's list is not changed
+        var planned = new List<LedgerEntry>();
+
         decimal exactDays = 0;   // running exact totals for this earning period
         decimal exactHours = 0;
-        var created = 0;
 
         for (var monthStart = periodStart; monthStart <= periodEnd; monthStart = monthStart.AddMonths(1))
         {
@@ -202,12 +231,11 @@ public class AccrualService(ExamDatabase db, ScheduleConversionService conversio
                 Note = $"Accrual {monthStart:yyyy-MM}",
             };
 
-            await db.InsertAsync(entry);
             booked.Add(entry);
-            created++;
+            planned.Add(entry);
         }
 
-        return created;
+        return planned;
     }
 
     /// <summary>The usage window and transfer deadline of a bucket, all from the global rules.</summary>
@@ -262,25 +290,4 @@ public class AccrualService(ExamDatabase db, ScheduleConversionService conversio
     private static DateOnly ToDate(DateTime value) => DateOnly.FromDateTime(value);
 
     private static DateTime ToDateTime(DateOnly value) => value.ToDateTime(TimeOnly.MinValue);
-
-    /// <summary>One employee's schedule history: which schedule was in force on a date, and what it means in hours.</summary>
-    private sealed class ScheduleBook(List<WorkSchedule> schedules, List<WorkScheduleDay> days)
-    {
-        /// <summary>Weekly hours, and the average length of a working day (weekly hours / working days).</summary>
-        public (decimal WeeklyHours, decimal DayLength) On(DateOnly date)
-        {
-            var schedule = schedules.FirstOrDefault(s => Covers(s, date))
-                           ?? schedules.LastOrDefault(s => ToDate(s.ValidFrom) <= date)
-                           ?? schedules[0];
-
-            var rows = days.Where(d => d.ScheduleId == schedule.ScheduleId).ToList();
-            var weekly = rows.Sum(d => d.Hours);
-            var working = rows.Count(d => d.Hours > 0);
-
-            return (weekly, working == 0 ? 0 : weekly / working);
-        }
-
-        private static bool Covers(WorkSchedule s, DateOnly date) =>
-            ToDate(s.ValidFrom) <= date && (s.ValidTo is null || ToDate(s.ValidTo.Value) >= date);
-    }
 }

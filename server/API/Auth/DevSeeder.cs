@@ -7,7 +7,7 @@ namespace api.Auth;
 
 /// <summary>
 /// DEVELOPMENT ONLY: creates test logins (password "demo"), two employees with working
-/// schedules, and a few sample holiday requests, but only if they don't exist yet.
+/// schedules, but only if they don't exist yet. (Holiday requests are made through the app.)
 /// Passwords must be hashed by code, so we can't just put them in a .sql file.
 /// </summary>
 public static class DevSeeder
@@ -43,7 +43,6 @@ public static class DevSeeder
         await EnsureEmployeeAsync(db, "E001", "Anna Hansen", "anna" + Domain, FullTime);
         await EnsureEmployeeAsync(db, "E002", "Clara Nielsen", "clara" + Domain, PartTime);
 
-        await SeedRequestsAsync(db);
     }
 
     /// <summary>The accountant and system owner logins: no employee behind them.</summary>
@@ -109,51 +108,5 @@ public static class DevSeeder
         }
 
         await transaction.CommitAsync();
-    }
-
-    private static async Task SeedRequestsAsync(ExamDatabase db)
-    {
-        var annaLogin = await db.UserAccounts.FirstAsync(a => a.Email.ToLower() == "anna" + Domain);
-        var annaId = annaLogin.EmployeeId!.Value;
-        if (await db.HolidayRequests.AnyAsync(r => r.EmployeeId == annaId)) return;
-
-        var accountant = await db.UserAccounts.FirstAsync(a => a.Role == Roles.Accountant);
-
-        var accountIds = await db.HolidayAccountTypes.ToDictionaryAsync(a => a.Code, a => a.AccountTypeId);
-        if (!accountIds.TryGetValue("WEEKS_1_5", out var weeks15) || !accountIds.TryGetValue("WEEK_6", out var week6))
-            throw new InvalidOperationException(
-                "holiday_account_type is empty. Run the SQL schema script (it seeds the two account types) first.");
-
-        // Hours follow the schedule: Mon-Thu 7.5 h, Fri 7 h, so one full week = 37 h.
-        var samples = new[]
-        {
-            (Start: new DateTime(2027, 2, 15),  End: new DateTime(2027, 2, 19),  Account: weeks15, Hours: 37m,  Days: 5m,  Status: "CANCELLATION_REQUESTED", Main: false),
-            (Start: new DateTime(2027, 7, 5),   End: new DateTime(2027, 7, 23),  Account: weeks15, Hours: 111m, Days: 15m, Status: "SUBMITTED",              Main: true),
-            (Start: new DateTime(2026, 10, 23), End: new DateTime(2026, 10, 23), Account: weeks15, Hours: 7m,   Days: 1m,  Status: "APPROVED",               Main: false),
-            (Start: new DateTime(2027, 5, 10),  End: new DateTime(2027, 5, 14),  Account: week6,   Hours: 37m,  Days: 5m,  Status: "REJECTED",               Main: false),
-            (Start: new DateTime(2027, 3, 8),   End: new DateTime(2027, 3, 9),   Account: weeks15, Hours: 15m,  Days: 2m,  Status: "CANCELLED_BY_EMPLOYEE",  Main: false),
-        };
-
-        foreach (var s in samples)
-        {
-            var decided = s.Status is "APPROVED" or "REJECTED" or "CANCELLATION_REQUESTED";
-            var cancelRequested = s.Status == "CANCELLATION_REQUESTED";
-
-            await db.InsertAsync(new HolidayRequest
-            {
-                EmployeeId = annaId,
-                AccountTypeId = s.Account,
-                StartDate = s.Start,
-                EndDate = s.End,
-                IsMainHoliday = s.Main,
-                Status = s.Status,
-                TotalHours = s.Hours,
-                TotalDays = s.Days,
-                DecidedBy = decided ? accountant.AccountId : null,
-                DecidedAt = decided ? DateTime.UtcNow : null,
-                CancellationRequestedAt = cancelRequested ? DateTime.UtcNow : null,
-                CancelReason = cancelRequested ? "My plans changed." : null,
-            });
-        }
     }
 }
